@@ -8,13 +8,18 @@ from fastapi.exceptions import RequestValidationError
 from app.operations import add, subtract, multiply, divide  # Ensure correct import path
 import uvicorn
 import logging
+from app.database import Base, engine, SessionLocal
+from app.models import User
+from app.schemas import UserCreate, UserRead
+from app.security import hash_password
+from sqlalchemy.orm import Session
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-
+Base.metadata.create_all(bind=engine)
 # Setup templates directory
 templates = Jinja2Templates(directory="templates")
 
@@ -113,6 +118,29 @@ async def divide_route(operation: OperationRequest):
     except Exception as e:
         logger.error(f"Divide Operation Internal Error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+@app.post("/users", response_model=UserRead)
+def create_user(user: UserCreate):
+    db: Session = SessionLocal()
 
+    existing_user = db.query(User).filter(
+        (User.username == user.username) | (User.email == user.email)
+    ).first()
+
+    if existing_user:
+        db.close()
+        raise HTTPException(status_code=400, detail="Username or email already exists")
+
+    new_user = User(
+        username=user.username,
+        email=user.email,
+        password_hash=hash_password(user.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    db.close()
+
+    return new_user
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
