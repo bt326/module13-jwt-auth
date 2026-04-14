@@ -1,14 +1,17 @@
+import uuid
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
 def test_create_user_success():
+    unique = str(uuid.uuid4())[:8]
+
     response = client.post(
         "/users",
         json={
-            "username": "user_test_1",
-            "email": "user_test_1@test.com",
+            "username": f"user_{unique}",
+            "email": f"{unique}@test.com",
             "password": "123456"
         }
     )
@@ -18,7 +21,7 @@ def test_invalid_email():
     response = client.post(
         "/users",
         json={
-            "username": "user_test_2",
+            "username": "user_invalid",
             "email": "wrong-email",
             "password": "123456"
         }
@@ -26,11 +29,15 @@ def test_invalid_email():
     assert response.status_code == 400
 
 def test_duplicate_user():
+    unique = str(uuid.uuid4())[:8]
+    username = f"user_{unique}"
+    email = f"{unique}@test.com"
+
     client.post(
         "/users",
         json={
-            "username": "duplicate1",
-            "email": "duplicate1@test.com",
+            "username": username,
+            "email": email,
             "password": "123456"
         }
     )
@@ -38,8 +45,8 @@ def test_duplicate_user():
     response = client.post(
         "/users",
         json={
-            "username": "duplicate1",
-            "email": "duplicate1@test.com",
+            "username": username,
+            "email": email,
             "password": "123456"
         }
     )
