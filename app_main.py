@@ -23,8 +23,3 @@ def register():
 @app.post("/login")
 def login():
     return {"access_token": "demo_token", "token_type": "bearer"}
-
-import uvicorn
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
