@@ -1,7 +1,9 @@
 # Reflection
 
-This assignment helped me understand how to transform a basic FastAPI project into a secure backend application. I implemented a user model using SQLAlchemy and validated data using Pydantic schemas.
+This assignment helped me learn how JWT authentication works in FastAPI. I implemented user registration and login with password hashing and token generation.
 
-One of the biggest learning experiences was password hashing and debugging CI/CD issues in GitHub Actions. I also learned how to write unit and integration tests and how automated workflows improve software quality.
+I also created frontend pages for register and login, which helped me understand how backend APIs connect with HTML forms.
 
-Another valuable skill was building Docker images and publishing them to Docker Hub. Overall, this project improved my skills in backend development, testing, deployment, and professional project structure.
+Another important learning experience was testing. I ran Playwright end-to-end tests and fixed GitHub Actions workflow errors until all checks passed.
+
+Finally, I built a Docker image and pushed it to Docker Hub. Overall, this project improved my skills in authentication, debugging, testing, CI/CD, and deployment.
